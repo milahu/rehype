@@ -31,7 +31,13 @@
 import Parser5 from 'parse5/lib/parser/index.js'
 import {fromParse5} from 'hast-util-from-parse5'
 import { parseDocument as parseWithHtmlparser2 } from 'htmlparser2';
+
 import {fromHtmlparser2} from 'hast-util-from-htmlparser2'
+// no. this is the wrong adapter
+// we need htmlparser2-parse5-tree-adapter
+// https://github.com/fb55/htmlparser2/issues/1322
+//import {adapter as fromHtmlparser2} from 'parse5-htmlparser2-tree-adapter'
+
 import {errors} from './errors.js'
 
 const base = 'https://html.spec.whatwg.org/multipage/parsing.html#parse-error-'
@@ -124,8 +130,11 @@ export default function rehypeParse(options) {
 
   /** @type {import('unified').ParserFunction<Root>} */
   function xmlParser(doc, file) {
-    const tree = parseWithHtmlparser2(doc, {})
-    return fromHtmlparser2(tree, {
+    // TODO? htmlparser2-parse5-tree-adapter
+    //const treeParse5 = treeParse5FromTreeHtmlparser2(treeHtmlparser2)
+    //return fromParse5(treeParse5, {
+    const treeHtmlparser2 = parseWithHtmlparser2(doc, {})
+    return fromHtmlparser2(treeHtmlparser2, {
       space: settings.space,
       file,
       verbose: settings.verbose
